@@ -10,8 +10,8 @@ export const SettingsPage = () => {
 
 	const {loading: ipfsLoading} = useIpfs();
 
+	const [ipfsMode, setIpfsMode] = useState(settings.ipfsMode);
 	const [apiUrl, setApiUrl] = useState(settings.apiUrl);
-	const [rootFolder, setRootFolder] = useState(settings.rootFolder);
 	const [gateway, setGateway] = useState(settings.gateway);
 	const [thumbor, setThumbor] = useState(settings.thumbor);
 
@@ -19,11 +19,11 @@ export const SettingsPage = () => {
 		e.preventDefault();
 
 		settings.setApiUrl(apiUrl);
+		settings.setIpfsMode(ipfsMode);
 		settings.setGateway(gateway);
-		settings.setRootFolder(rootFolder);
 		settings.setThumbor(thumbor);
 		settings.setSetup(true);
-	}, [apiUrl, settings, rootFolder, gateway, thumbor]);
+	}, [apiUrl, settings, gateway, thumbor, ipfsMode]);
 
 	if(ipfsLoading){
 		return (
@@ -46,22 +46,26 @@ export const SettingsPage = () => {
 					<FormHelperText>The URL to the api endpoint of the IPFS node</FormHelperText>
 				</FormControl>
 				<Divider />
-				<FormControl id="api-url">
-					<FormLabel>Ipfs Node Url</FormLabel>
-					<Input
-						value={apiUrl ?? ""}
-						onChange={e => setApiUrl(e.target.value)}
-					/>
-					<FormHelperText>The URL to the api endpoint of the IPFS node</FormHelperText>
+				<FormControl id="ipfs-mode">
+					<FormLabel>IPFS Mode</FormLabel>
+					<Select
+						value={ipfsMode ?? ""}
+						onChange={e => setIpfsMode(e.target.value)}
+					>
+						<option value="remote">remote</option>
+						<option value="local">local</option>
+					</Select>
 				</FormControl>
-				<FormControl id="root-folder">
-					<FormLabel>Galleries Path</FormLabel>
-					<Input
-						value={rootFolder ?? ""}
-						onChange={e => setRootFolder(e.target.value)}
-					/>
-					<FormHelperText>The root folder on the node</FormHelperText>
-				</FormControl>
+				{ipfsMode === 'remote' && (
+					<FormControl id="api-url">
+						<FormLabel>Ipfs Node Url</FormLabel>
+						<Input
+							value={apiUrl ?? ""}
+							onChange={e => setApiUrl(e.target.value)}
+						/>
+						<FormHelperText>The URL to the api endpoint of the IPFS node</FormHelperText>
+					</FormControl>
+				)}
 				<FormControl id="thumbor-url">
 					<FormLabel>Thumbor URL</FormLabel>
 					<Input

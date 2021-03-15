@@ -7,6 +7,7 @@ export const useAppSettings = () => useContext(IpfsSettingsContext);
 
 export const AppSettingsProvider = ({children}) => {
 	const [setup, setSetup, clearSetup] = useLocalStorage('setup');
+	const [ipfsMode, setIpfsMode, clearIpfsMode] = useLocalStorage('ipfs-mode', 'local');
 	const [apiUrl, setApiUrl, clearApiUrl] = useLocalStorage('ipfs-api-url');
 	const [gateway, setGateway, clearGateway] = useLocalStorage('ipfs-gateway', 'https://ipfs.io');
 	const [thumbor, setThumbor, clearThumbor] = useLocalStorage('thumbor-url');
@@ -24,6 +25,7 @@ export const AppSettingsProvider = ({children}) => {
 
 	const context = {
 		setup, setSetup, clearSetup,
+		ipfsMode, setIpfsMode, clearIpfsMode,
 		apiUrl, setApiUrl, clearApiUrl,
 		gateway, setGateway, clearGateway,
 		thumbor, setThumbor, clearThumbor,

@@ -3,6 +3,8 @@ import isIpfs from 'is-ipfs';
 import { useAppSettings } from "../providers/AppSettingsProvider.js";
 import { useIpfsFileFolder, useIpfsFolder } from "./useIpfsFileFolder.js";
 
+const imageTypes = /\.(jpg|jpeg|png|gif)/i;
+
 export function useFolderImages(addressOrPath){
 	const thumbsPath = addressOrPath+'/.thumbs';
 	const { gateway } = useAppSettings();
@@ -13,11 +15,11 @@ export function useFolderImages(addressOrPath){
 	const { data: thumbsDir, isLoading: loadingThumbsDir } = hookFn(thumbsPath);
 
 	const images = useMemo(() => {
-		if(dir && thumbsDir){
+		if(dir && !loadingThumbsDir){
 			return dir
-				.filter(f => f.type === 'file')
+				.filter(f => f.type === 'file' && imageTypes.test(f.name))
 				.map(file => {
-					const thumbnail = thumbsDir.find(f => f.name === file.name);
+					const thumbnail = thumbsDir && thumbsDir.find(f => f.name === file.name);
 
 					return {
 						name: file.name,
@@ -28,7 +30,7 @@ export function useFolderImages(addressOrPath){
 					}
 				});
 		}
-	}, [dir, thumbsDir]);
+	}, [dir, loadingThumbsDir, thumbsDir]);
 
 	return {
 		images,
