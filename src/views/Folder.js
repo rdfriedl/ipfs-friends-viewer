@@ -1,17 +1,16 @@
 import React, { useMemo } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
-import Gallery from 'react-grid-gallery';
 import { PageContainer } from '../components/PageContainer.js';
 import { useAppSettings } from '../providers/AppSettingsProvider.js';
 import { useIpfs } from '../providers/IpfsProvider.js';
 import { useIpfsFileFolder } from '../hooks/useIpfsFileFolder.js';
-import { FolderImagesProvider } from '../providers/FolderImagesProvider.js';
 import { useQuery } from 'react-query';
-import { LinkButton } from '../components/link-button.js';
+import { Wrap, WrapItem } from '@chakra-ui/react';
+import { FolderCard } from '../components/FolderCard.js';
+import { ImageCard } from '../components/ImageCard.js';
 
-const CurrentFolder = React.createContext('');
-const imageTypes = /\.(jpg|jpeg|png)/i;
+const imageTypes = /\.(jpg|jpeg|png|gif)/i;
 
 export function loadBlob(url) {
 	return fetch(url).then((res) => res.blob());
@@ -49,8 +48,6 @@ async function getImagesWithThumbnails({ipfs, thumbor, path, gateway}){
 				file,
 				src: imageSrc,
 				thumbnail: thumbnail && `${gateway}/ipfs/${thumbnail.cid.toString()}`,
-				thumbnailWidth: 1,
-				thumbnailHeight: 1,
 			})
 		}
 	}
@@ -76,19 +73,20 @@ export const FolderPage = () => {
 	}, [ipfs, path, thumbor, gateway]);
 
 	return (
-		<FolderImagesProvider path={path}>
-			<ul>
+		<div>
+			<Wrap>
 				{subFolders.map(dir => (
-					<li key={dir.cid.toString()}>
-						<Link to={`${pathname}/${dir.name}`}>{dir.name}</Link>
-						<LinkButton variant="outline" to={`/ipfs/${dir.cid}`}>Open</LinkButton>
-					</li>
+					<WrapItem key={dir.cid.toString()}>
+						<FolderCard name={dir.name} to={`${pathname}/${dir.name}`} cid={dir.cid}/>
+					</WrapItem>
 				))}
-			</ul>
-			{images.length > 0 && (
-				<Gallery images={images} enableImageSelection={false}/>
-			)}
-		</FolderImagesProvider>
+				{images.map(image => (
+					<WrapItem key={image.file.cid.toString()}>
+						<ImageCard name={image.file.name} src={image.thumbnail} href={image.src}/>
+					</WrapItem>
+				))}
+			</Wrap>
+		</div>
 	)
 }
 
