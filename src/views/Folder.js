@@ -4,11 +4,12 @@ import { useLocation } from 'react-router-dom';
 import { PageContainer } from '../components/PageContainer.js';
 import { useAppSettings } from '../providers/AppSettingsProvider.js';
 import { useIpfs } from '../providers/IpfsProvider.js';
-import { useIpfsFileFolder } from '../hooks/useIpfsFileFolder.js';
+import { useIpfsFileFolder, useIpfsFolder } from '../hooks/useIpfsFileFolder.js';
 import { useQuery } from 'react-query';
 import { Wrap, WrapItem } from '@chakra-ui/react';
 import { FolderCard } from '../components/FolderCard.js';
 import { ImageCard } from '../components/ImageCard.js';
+import { useFolderImages } from '../hooks/useFolderImages.js';
 
 const imageTypes = /\.(jpg|jpeg|png|gif)/i;
 
@@ -55,6 +56,27 @@ async function getImagesWithThumbnails({ipfs, thumbor, path, gateway}){
 	return images;
 }
 
+const FolderCardWithThumbnail = ({name, cid, to}) => {
+	const { data: thumbnails } = useIpfsFolder(`/ipfs/${cid}/.thumbs`, {suspense: false});
+	const { gateway } = useAppSettings();
+
+	const selectedThumbnails = useMemo(
+		() => {
+			if(thumbnails){
+				return Array.from(thumbnails)
+					.splice(0,4)
+					.filter(Boolean)
+					.map(file => `${gateway}/ipfs/${file.cid.toString()}`);
+			}
+		},
+		[ thumbnails ]
+	);
+
+	return (
+		<FolderCard name={name} to={to} thumbnails={selectedThumbnails}/>
+	)
+}
+
 export const FolderPage = () => {
 	const { ipfs } = useIpfs();
 	const { pathname } = useLocation();
@@ -77,7 +99,7 @@ export const FolderPage = () => {
 			<Wrap>
 				{subFolders.map(dir => (
 					<WrapItem key={dir.cid.toString()}>
-						<FolderCard name={dir.name} to={`${pathname}/${dir.name}`} cid={dir.cid}/>
+						<FolderCardWithThumbnail name={dir.name} to={`${pathname}/${dir.name}`} cid={dir.cid.toString()}/>
 					</WrapItem>
 				))}
 				{images.map(image => (

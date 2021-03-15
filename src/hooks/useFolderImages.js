@@ -25,8 +25,6 @@ export function useFolderImages(addressOrPath){
 						name: file.name,
 						src: `${gateway}/ipfs/${file.cid.toString()}`,
 						thumbnail: thumbnail && `${gateway}/ipfs/${thumbnail.cid.toString()}`,
-						thumbnailWidth: 256,
-						thumbnailHeight: 256,
 					}
 				});
 		}
