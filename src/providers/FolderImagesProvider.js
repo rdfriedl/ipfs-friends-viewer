@@ -1,15 +1,15 @@
 import React, { useMemo } from 'react';
-import { useIpfsFolder } from '../hooks/useIpfsFolder.js';
+import { useIpfsFileFolder } from '../hooks/useIpfsFileFolder.js';
 import { useAppSettings } from './AppSettingsProvider.js';
 
 const GalleryContext = React.createContext({});
 
-export const GalleryProvider = ({path, children}) => {
+export const FolderImagesProvider = ({path, children}) => {
 	const thumbsPath = path+'/.thumbs';
 	const { gateway } = useAppSettings();
 
-	const { data: dir, isLoading: loadingDir } = useIpfsFolder(path);
-	const { data: thumbsDir, isLoading: loadingThumbsDir } = useIpfsFolder(thumbsPath);
+	const { data: dir, isLoading: loadingDir } = useIpfsFileFolder(path);
+	const { data: thumbsDir, isLoading: loadingThumbsDir } = useIpfsFileFolder(thumbsPath);
 
 	const images = useMemo(() => {
 		if(dir && thumbsDir){

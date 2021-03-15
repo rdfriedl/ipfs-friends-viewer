@@ -1,15 +1,14 @@
 import React, { useMemo } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { useAsync } from 'react-use';
 
 import Gallery from 'react-grid-gallery';
-import { PageContainer } from '../../components/PageContainer.js';
-import { useAppSettings } from '../../providers/AppSettingsProvider.js';
-import { useIpfs } from '../../providers/IpfsProvider.js';
-import { useBetterAsync } from '../../hooks/useBetterAsync.js';
-import { useIpfsFolder } from '../../hooks/useIpfsFolder.js';
-import { GalleryProvider } from '../../providers/GalleryProvider.js';
+import { PageContainer } from '../components/PageContainer.js';
+import { useAppSettings } from '../providers/AppSettingsProvider.js';
+import { useIpfs } from '../providers/IpfsProvider.js';
+import { useIpfsFileFolder } from '../hooks/useIpfsFileFolder.js';
+import { FolderImagesProvider } from '../providers/FolderImagesProvider.js';
 import { useQuery } from 'react-query';
+import { LinkButton } from '../components/link-button.js';
 
 const CurrentFolder = React.createContext('');
 const imageTypes = /\.(jpg|jpeg|png)/i;
@@ -65,7 +64,7 @@ export const FolderPage = () => {
 	const { gateway, thumbor } = useAppSettings();
 	const path = pathname.replace(/^\/folder/, '') || '/';
 
-	const { data: contents = [] } = useIpfsFolder(path);
+	const { data: contents = [] } = useIpfsFileFolder(path);
 
 	const subFolders = useMemo(
 		() => contents.filter(f => f.type === "directory" && f.name !== '.thumbs'),
@@ -77,18 +76,19 @@ export const FolderPage = () => {
 	}, [ipfs, path, thumbor, gateway]);
 
 	return (
-		<GalleryProvider path={path}>
+		<FolderImagesProvider path={path}>
 			<ul>
 				{subFolders.map(dir => (
 					<li key={dir.cid.toString()}>
 						<Link to={`${pathname}/${dir.name}`}>{dir.name}</Link>
+						<LinkButton variant="outline" to={`/ipfs/${dir.cid}`}>Open</LinkButton>
 					</li>
 				))}
 			</ul>
 			{images.length > 0 && (
 				<Gallery images={images} enableImageSelection={false}/>
 			)}
-		</GalleryProvider>
+		</FolderImagesProvider>
 	)
 }
 

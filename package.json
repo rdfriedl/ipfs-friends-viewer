@@ -12,6 +12,7 @@
     "framer-motion": "^3.10.3",
     "ipfs": "^0.54.4",
     "ipfs-http-client": "^49.0.4",
+    "is-ipfs": "^4.0.0",
     "qs": "^6.9.6",
     "react": "^17.0.0",
     "react-dom": "^17.0.0",
