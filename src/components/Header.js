@@ -11,9 +11,6 @@ export const Header = () => (
 				<LinkButton to="/folder">Browse</LinkButton>
 				<LinkButton to="/settings">Settings</LinkButton>
 			</ButtonGroup>
-			<form action="/watch">
-				<Input placeholder="youtube id" name="v"/>
-			</form>
 		</Flex>
 	</Box>
 )
