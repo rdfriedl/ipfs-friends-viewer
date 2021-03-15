@@ -6,9 +6,58 @@ import Gallery from 'react-grid-gallery';
 import { PageContainer } from '../../components/PageContainer.js';
 import { useAppSettings } from '../../providers/AppSettingsProvider.js';
 import { useIpfs } from '../../providers/IpfsProvider.js';
+import { useBetterAsync } from '../../hooks/useBetterAsync.js';
+import { useIpfsFolder } from '../../hooks/useIpfsFolder.js';
+import { GalleryProvider } from '../../providers/GalleryProvider.js';
+import { useQuery } from 'react-query';
 
 const CurrentFolder = React.createContext('');
 const imageTypes = /\.(jpg|jpeg|png)/i;
+
+export function loadBlob(url) {
+	return fetch(url).then((res) => res.blob());
+}
+async function ipfsListFolder(ipfs, path, opts){
+	const list = ipfs.files.ls(path, opts);
+
+	const entries = [];
+	for await (let entry of list){
+		entries.push(entry);
+	}
+	return entries;
+}
+async function getImagesWithThumbnails({ipfs, thumbor, path, gateway}){
+	const contents = await ipfsListFolder(ipfs, path);
+	const thumbsPath = path+'/.thumbs';
+
+	const hasThumbsFolder = contents.find(entry => entry.type === 'directory' && entry.name === '.thumbs');
+	if(!hasThumbsFolder){
+		await ipfs.files.mkdir(thumbsPath);
+	}
+	const thumbnails = await ipfsListFolder(ipfs, thumbsPath, {type: 'file'});
+
+	const images = [];
+	for (let file of contents){
+		if(imageTypes.test(file.name)){
+			const imageSrc = `${gateway}/ipfs/${file.cid.toString()}`;
+			const thumbnail = thumbnails.find(f => f.name === file.name);
+			if(!thumbnail && thumbor){
+				let blob = await loadBlob(`https://cors.rdfriedl.com/${thumbor}/unsafe/256x256/${encodeURIComponent(imageSrc)}`);
+				await ipfs.files.write(`${thumbsPath}/${file.name}`, blob, {create: true});
+			}
+
+			images.push({
+				file,
+				src: imageSrc,
+				thumbnail: thumbnail && `${gateway}/ipfs/${thumbnail.cid.toString()}`,
+				thumbnailWidth: 1,
+				thumbnailHeight: 1,
+			})
+		}
+	}
+
+	return images;
+}
 
 export const FolderPage = () => {
 	const { ipfs } = useIpfs();
@@ -16,35 +65,19 @@ export const FolderPage = () => {
 	const { gateway, thumbor } = useAppSettings();
 	const path = pathname.replace(/^\/folder/, '') || '/';
 
-	const {value: contents = [], loading, error} = useAsync(async () => {
-		const list = ipfs.files.ls(path);
+	const { data: contents = [] } = useIpfsFolder(path);
 
-		const entries = [];
-		for await (let entry of list){
-			entries.push(entry);
-		}
-		return entries;
-	}, [ipfs, path]);
+	const subFolders = useMemo(
+		() => contents.filter(f => f.type === "directory" && f.name !== '.thumbs'),
+		[contents]
+	);
 
-	const subFolders = useMemo(() => contents.filter(entry => entry.type === 'directory'), [contents]);
-	const files = useMemo(() => contents.filter(entry => entry.type === 'file'), [contents]);
-	const images = useMemo(() => {
-		return files
-			.filter(file => imageTypes.test(file.name))
-			.map(file => {
-				const src = `${gateway}/ipfs/${file.cid.toString()}`;
-
-				return ({
-					src,
-					thumbnail: thumbor ? `${thumbor}/unsafe/128x128/${encodeURIComponent(src)}` : null,
-					thumbnailWidth: 1,
-					thumbnailHeight: 1,
-				})
-			})
-	}, [files]);
+	const { data: images = [] } = useQuery(['getImagesWithThumbnails', path], async () => {
+		return await getImagesWithThumbnails({ipfs, path, thumbor, gateway})
+	}, [ipfs, path, thumbor, gateway]);
 
 	return (
-		<CurrentFolder.Provider value={path}>
+		<GalleryProvider path={path}>
 			<ul>
 				{subFolders.map(dir => (
 					<li key={dir.cid.toString()}>
@@ -52,8 +85,10 @@ export const FolderPage = () => {
 					</li>
 				))}
 			</ul>
-			<Gallery images={images} enableImageSelection={false}/>
-		</CurrentFolder.Provider>
+			{images.length > 0 && (
+				<Gallery images={images} enableImageSelection={false}/>
+			)}
+		</GalleryProvider>
 	)
 }
 
