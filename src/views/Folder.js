@@ -3,58 +3,14 @@ import { useLocation } from 'react-router-dom';
 
 import { PageContainer } from '../components/PageContainer.js';
 import { useAppSettings } from '../providers/AppSettingsProvider.js';
-import { useIpfs } from '../providers/IpfsProvider.js';
 import { useIpfsFileFolder, useIpfsFolder } from '../hooks/useIpfsFileFolder.js';
-import { useQuery } from 'react-query';
-import { Wrap, WrapItem } from '@chakra-ui/react';
+import { Box, Button, ButtonGroup, Flex, Wrap, WrapItem } from '@chakra-ui/react';
 import { FolderCard } from '../components/FolderCard.js';
 import { ImageCard } from '../components/ImageCard.js';
-import { useFolderImages } from '../hooks/useFolderImages.js';
-
-const imageTypes = /\.(jpg|jpeg|png|gif)/i;
-
-export function loadBlob(url) {
-	return fetch(url).then((res) => res.blob());
-}
-async function ipfsListFolder(ipfs, path, opts){
-	const list = ipfs.files.ls(path, opts);
-
-	const entries = [];
-	for await (let entry of list){
-		entries.push(entry);
-	}
-	return entries;
-}
-async function getImagesWithThumbnails({ipfs, thumbor, path, gateway}){
-	const contents = await ipfsListFolder(ipfs, path);
-	const thumbsPath = path+'/.thumbs';
-
-	const hasThumbsFolder = contents.find(entry => entry.type === 'directory' && entry.name === '.thumbs');
-	if(!hasThumbsFolder){
-		await ipfs.files.mkdir(thumbsPath);
-	}
-	const thumbnails = await ipfsListFolder(ipfs, thumbsPath, {type: 'file'});
-
-	const images = [];
-	for (let file of contents){
-		if(imageTypes.test(file.name)){
-			const imageSrc = `${gateway}/ipfs/${file.cid.toString()}`;
-			const thumbnail = thumbnails.find(f => f.name === file.name);
-			if(!thumbnail && thumbor){
-				let blob = await loadBlob(`https://cors.rdfriedl.com/${thumbor}/unsafe/256x256/${encodeURIComponent(imageSrc)}`);
-				await ipfs.files.write(`${thumbsPath}/${file.name}`, blob, {create: true});
-			}
-
-			images.push({
-				file,
-				src: imageSrc,
-				thumbnail: thumbnail && `${gateway}/ipfs/${thumbnail.cid.toString()}`,
-			})
-		}
-	}
-
-	return images;
-}
+import { UpButton } from '../components/UpButton.js';
+import { imageTypes } from '../const.js';
+import { useIpfsFileHash } from '../hooks/useIpfsFileHash.js';
+import { useGenerateThumbnailsMutation } from '../hooks/useGenerateThumbnailsMutation.js';
 
 const FolderCardWithThumbnail = ({name, cid, to}) => {
 	const { data: thumbnails } = useIpfsFolder(`/ipfs/${cid}/.thumbs`, {suspense: false});
@@ -64,6 +20,7 @@ const FolderCardWithThumbnail = ({name, cid, to}) => {
 		() => {
 			if(thumbnails){
 				return Array.from(thumbnails)
+					.sort(() => Math.random() - 0.5)
 					.splice(0,4)
 					.filter(Boolean)
 					.map(file => `${gateway}/ipfs/${file.cid.toString()}`);
@@ -77,11 +34,34 @@ const FolderCardWithThumbnail = ({name, cid, to}) => {
 	)
 }
 
+const Toolbar = ({folder, onRegenThumbnails}) => {
+	const { mutate, isLoading } = useGenerateThumbnailsMutation({
+		onSuccess: onRegenThumbnails
+	});
+
+	const handleGenerateClick = () => {
+		mutate({path: folder, regenAll: true});
+	}
+
+	return (
+		<Box as="nav" w="100%" padding="2">
+			<Flex justifyContent="space-between">
+				<ButtonGroup>
+					<UpButton>Back</UpButton>
+					<Button onClick={handleGenerateClick} isLoading={isLoading}>Generate Thumbnails</Button>
+				</ButtonGroup>
+			</Flex>
+		</Box>
+	)
+}
+
 export const FolderPage = () => {
-	const { ipfs } = useIpfs();
 	const { pathname } = useLocation();
-	const { gateway, thumbor } = useAppSettings();
+	const { gateway } = useAppSettings();
 	const path = pathname.replace(/^\/folder/, '') || '/';
+
+	const { data: folderHash, refetch: refetchHash } = useIpfsFileHash(path);
+	const folderIpfsPath = `${gateway}/ipfs/${folderHash}`;
 
 	const { data: contents = [] } = useIpfsFileFolder(path);
 
@@ -90,12 +70,16 @@ export const FolderPage = () => {
 		[contents]
 	);
 
-	const { data: images = [] } = useQuery(['getImagesWithThumbnails', path], async () => {
-		return await getImagesWithThumbnails({ipfs, path, thumbor, gateway})
-	}, [ipfs, path, thumbor, gateway]);
+	const images = useMemo(
+		() => contents.filter(f => f.type === 'file' && imageTypes.test(f.name)),
+		[contents]
+	);
+
+	const onRegenSuccess = () => refetchHash();
 
 	return (
 		<div>
+			<Toolbar folder={path} onRegenThumbnails={onRegenSuccess}/>
 			<Wrap>
 				{subFolders.map(dir => (
 					<WrapItem key={dir.cid.toString()}>
@@ -103,8 +87,8 @@ export const FolderPage = () => {
 					</WrapItem>
 				))}
 				{images.map(image => (
-					<WrapItem key={image.file.cid.toString()}>
-						<ImageCard name={image.file.name} src={image.thumbnail} href={image.src}/>
+					<WrapItem key={image.cid.toString()}>
+						<ImageCard name={image.name} src={`${folderIpfsPath}/.thumbs/${image.name}`} href={`${folderIpfsPath}/${image.name}`}/>
 					</WrapItem>
 				))}
 			</Wrap>

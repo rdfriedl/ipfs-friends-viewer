@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {Box, Flex, Input, ButtonGroup} from '@chakra-ui/react'
+import {Box, Flex, ButtonGroup} from '@chakra-ui/react'
 import { LinkButton } from './link-button';
 
 export const Header = () => (
