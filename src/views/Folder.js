@@ -40,7 +40,7 @@ const Toolbar = ({folder, onRegenThumbnails}) => {
 	});
 
 	const handleGenerateClick = () => {
-		mutate({path: folder, regenAll: true});
+		mutate({path: folder});
 	}
 
 	return (
