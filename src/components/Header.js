@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {Box, Flex, ButtonGroup} from '@chakra-ui/react'
-import { LinkButton } from './link-button';
+import { LinkButton } from './LinkButton';
 
 export const Header = () => (
 	<Box as="nav" w="100%" padding="2">

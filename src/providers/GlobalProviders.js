@@ -20,6 +20,7 @@ const queryClient = new QueryClient({
 		queries: {
 			suspense: true,
 			retry: false,
+			keepPreviousData: true,
 		},
 		mutations: {
 			suspense: true,

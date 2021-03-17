@@ -5,8 +5,8 @@ import { useIpfs } from "../providers/IpfsProvider.js";
 export function useIpfsFolder(address, opts){
 	const { ipfs } = useIpfs();
 
-	if(!isIpfs.path(address)){
-		throw new Error(`${address} is not an ipfs path`);
+	if(!isIpfs.path(address) && !isIpfs.cid(address)){
+		throw new Error(`${address} is not an ipfs path ro cid`);
 	}
 
 	return useQuery(['useIpfsFolder', address], async () => {
