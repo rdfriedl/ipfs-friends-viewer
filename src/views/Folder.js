@@ -18,7 +18,7 @@ export const FolderPage = ({ pathname }) => {
 	});
 
 	const handleGenerateClick = () => {
-		mutate({ path, regenAll: false, recursive: true });
+		mutate({ path, regenImage: confirm('regen images'), regenFolder: confirm('regen folders'), recursive: true });
 	}
 
 	return (
