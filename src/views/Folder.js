@@ -9,10 +9,8 @@ import { useGenerateThumbnailsMutation } from '../hooks/useGenerateThumbnailsMut
 import { FolderContents } from '../components/FolderContents.js';
 import { LinkButton } from '../components/LinkButton.js';
 
-export const FolderPage = () => {
-	const { pathname } = useLocation();
+export const FolderPage = ({ pathname }) => {
 	const path = pathname.replace(/^\/folder/, '') || '/';
-
 	const { data: folderHash, refetch: refetchHash } = useIpfsFileHash(path);
 
 	const { mutate, isLoading } = useGenerateThumbnailsMutation({
@@ -20,7 +18,7 @@ export const FolderPage = () => {
 	});
 
 	const handleGenerateClick = () => {
-		mutate({ path });
+		mutate({ path, regenAll: false, recursive: true });
 	}
 
 	return (
@@ -34,13 +32,19 @@ export const FolderPage = () => {
 					</ButtonGroup>
 				</Flex>
 			</Box>
-			<FolderContents hash={folderHash}/>
+			{folderHash && (
+				<FolderContents hash={folderHash} pathname={pathname}/>
+			)}
 		</>
 	)
 }
 
-export const FolderView = () => (
-	<PageContainer>
-		<FolderPage/>
-	</PageContainer>
-)
+export const FolderView = () => {
+	const { pathname } = useLocation();
+
+	return (
+		<PageContainer>
+			<FolderPage pathname={pathname}/>
+		</PageContainer>
+	)
+}

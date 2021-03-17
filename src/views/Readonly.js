@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useLocation } from 'react-router-dom';
-import isIpfs, { path } from 'is-ipfs';
+import isIpfs from 'is-ipfs';
 
 import { Box, ButtonGroup, Flex } from '@chakra-ui/react';
 import { FolderContents } from '../components/FolderContents.js';
@@ -12,7 +12,7 @@ const isRootIpfsPath = /\/ip(fs|ns)\/[^\/]+$/i;
 
 export const ReadonlyGalleryPage = () => {
 	const { pathname } = useLocation();
-	const { data: folderHash, isLoading } = useIpfsFileHash(pathname);
+	const { data: folderHash } = useIpfsFileHash(pathname);
 
 	const canGoUp = isIpfs.path(pathname) && !isRootIpfsPath.test(pathname);
 
@@ -27,7 +27,9 @@ export const ReadonlyGalleryPage = () => {
 					)}
 				</Flex>
 			</Box>
-			<FolderContents hash={folderHash}/>
+			{folderHash && (
+				<FolderContents hash={folderHash} pathname={pathname}/>
+			)}
 		</div>
 	)
 }

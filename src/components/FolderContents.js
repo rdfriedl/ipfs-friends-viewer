@@ -9,30 +9,7 @@ import { ImageCard } from './ImageCard.js';
 import { FolderCard } from './FolderCard.js';
 import { imageTypes } from '../const.js';
 
-const FolderCardWithThumbnail = ({name, cid, to}) => {
-	const { data: thumbnails } = useIpfsFolder(`/ipfs/${cid}/.thumbs`, {suspense: false});
-	const { gateway } = useAppSettings();
-
-	const selectedThumbnails = useMemo(
-		() => {
-			if(thumbnails){
-				return Array.from(thumbnails)
-					.sort(() => Math.random() - 0.5)
-					.splice(0,4)
-					.filter(Boolean)
-					.map(file => `${gateway}/ipfs/${file.cid.toString()}`);
-			}
-		},
-		[ thumbnails ]
-	);
-
-	return (
-		<FolderCard name={name} to={to} thumbnails={selectedThumbnails}/>
-	)
-}
-
-export const FolderContents = ({hash}) => {
-	const { pathname } = useLocation();
+export const FolderContents = ({ hash, pathname }) => {
 	const { gateway } = useAppSettings();
 	const { data: contents = [] } = useIpfsFolder(hash);
 	const ipfsPath = `${gateway}/ipfs/${hash}`;
@@ -51,7 +28,16 @@ export const FolderContents = ({hash}) => {
 		<Wrap>
 			{subFolders.map(dir => (
 				<WrapItem key={dir.cid.toString()}>
-					<FolderCardWithThumbnail name={dir.name} to={`${pathname}/${dir.name}`} cid={dir.cid.toString()}/>
+					<FolderCard
+						name={dir.name}
+						to={`${pathname}/${dir.name}`}
+						thumbnails={[
+							`${ipfsPath}/.thumbs/${dir.name}/0`,
+							`${ipfsPath}/.thumbs/${dir.name}/1`,
+							`${ipfsPath}/.thumbs/${dir.name}/2`,
+							`${ipfsPath}/.thumbs/${dir.name}/3`,
+						]}
+					/>
 				</WrapItem>
 			))}
 			{images.map(image => (
