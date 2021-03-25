@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import { SRLWrapper } from "simple-react-lightbox";
 
 import { Wrap, WrapItem } from '@chakra-ui/react';

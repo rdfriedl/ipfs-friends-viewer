@@ -4,7 +4,7 @@ import { useIpfs } from "../providers/IpfsProvider";
 import { imageTypes } from '../const';
 
 const FOLDER_THUMB_SIZE = '200x200';
-const IMAGE_THUMB_SIZE = '200x0';
+const IMAGE_THUMB_SIZE = '300x0';
 
 export function loadBlob(url) {
 	return fetch(url).then((res) => res.blob());
