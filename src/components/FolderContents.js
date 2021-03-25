@@ -1,8 +1,8 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from "react";
+import { SRLWrapper } from "simple-react-lightbox";
 
 import { Wrap, WrapItem } from '@chakra-ui/react';
 
-import { useLocation } from 'react-router-dom';
 import { useIpfsFolder } from '../hooks/useIpfsFileFolder.js';
 import { useAppSettings } from '../providers/AppSettingsProvider.js';
 import { ImageCard } from './ImageCard.js';
@@ -25,26 +25,37 @@ export const FolderContents = ({ hash, pathname }) => {
 	);
 
 	return (
-		<Wrap>
-			{subFolders.map(dir => (
-				<WrapItem key={dir.cid.toString()}>
-					<FolderCard
-						name={dir.name}
-						to={`${pathname}/${dir.name}`}
-						thumbnails={[
-							`${ipfsPath}/.thumbs/${dir.name}/0`,
-							`${ipfsPath}/.thumbs/${dir.name}/1`,
-							`${ipfsPath}/.thumbs/${dir.name}/2`,
-							`${ipfsPath}/.thumbs/${dir.name}/3`,
-						]}
-					/>
-				</WrapItem>
-			))}
-			{images.map(image => (
-				<WrapItem key={image.cid.toString()}>
-					<ImageCard name={image.name} src={`${ipfsPath}/.thumbs/${image.name}`} href={`${ipfsPath}/${image.name}`}/>
-				</WrapItem>
-			))}
-		</Wrap>
-	)
+    <>
+      <Wrap>
+        {subFolders.map((dir) => (
+          <WrapItem key={dir.cid.toString()}>
+            <FolderCard
+              name={dir.name}
+              to={`${pathname}/${dir.name}`}
+              thumbnails={[
+                `${ipfsPath}/.thumbs/${dir.name}/0`,
+                `${ipfsPath}/.thumbs/${dir.name}/1`,
+                `${ipfsPath}/.thumbs/${dir.name}/2`,
+                `${ipfsPath}/.thumbs/${dir.name}/3`,
+              ]}
+            />
+          </WrapItem>
+        ))}
+      </Wrap>
+      <Wrap
+        as={SRLWrapper}
+        options={{ settings: {slideAnimationType: "both"}, caption: { showCaption: false} }}
+      >
+        {images.map((image, index) => (
+          <WrapItem key={image.cid.toString()}>
+            <ImageCard
+              name={image.name}
+              src={`${ipfsPath}/.thumbs/${image.name}`}
+              href={`${ipfsPath}/${image.name}`}
+            />
+          </WrapItem>
+        ))}
+      </Wrap>
+    </>
+  );
 }
