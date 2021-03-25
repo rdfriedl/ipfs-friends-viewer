@@ -1,6 +1,6 @@
 import { useMutation } from "react-query";
-import { useAppSettings } from "../providers/AppSettingsProvider.js";
-import { useIpfs } from "../providers/IpfsProvider.js";
+import { useAppSettings } from "../providers/AppSettingsProvider";
+import { useIpfs } from "../providers/IpfsProvider";
 import { imageTypes } from '../const';
 
 const FOLDER_THUMB_SIZE = '200x200';

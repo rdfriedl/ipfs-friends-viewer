@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { useIpfsId } from '../hooks/useIpfsId';
-import { PageContainer } from '../components/PageContainer.js';
+import { PageContainer } from '../components/PageContainer';
 
 const HomePage = () => {
 	const { id } = useIpfsId();
@@ -11,8 +11,10 @@ const HomePage = () => {
 	)
 }
 
-export const HomeView = () => (
+const HomeView = () => (
 	<PageContainer>
 		<HomePage/>
 	</PageContainer>
 )
+
+export default HomeView;

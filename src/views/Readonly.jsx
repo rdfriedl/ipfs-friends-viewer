@@ -3,14 +3,14 @@ import { useLocation } from 'react-router-dom';
 import isIpfs from 'is-ipfs';
 
 import { Box, ButtonGroup, Flex } from '@chakra-ui/react';
-import { FolderContents } from '../components/FolderContents.js';
-import { PageContainer } from '../components/PageContainer.js';
-import { UpButton } from '../components/UpButton.js';
-import { useIpfsFileHash } from '../hooks/useIpfsFileHash.js';
+import { FolderContents } from '../components/FolderContents';
+import { PageContainer } from '../components/PageContainer';
+import { UpButton } from '../components/UpButton';
+import { useIpfsFileHash } from '../hooks/useIpfsFileHash';
 
 const isRootIpfsPath = /\/ip(fs|ns)\/[^\/]+$/i;
 
-export const ReadonlyGalleryPage = () => {
+const ReadonlyGalleryPage = () => {
 	const { pathname } = useLocation();
 	const { data: folderHash } = useIpfsFileHash(pathname);
 
@@ -34,8 +34,10 @@ export const ReadonlyGalleryPage = () => {
 	)
 }
 
-export const ReadonlyGalleryView = () => (
+const ReadonlyGalleryView = () => (
 	<PageContainer>
 		<ReadonlyGalleryPage/>
 	</PageContainer>
 )
+
+export default ReadonlyGalleryView;

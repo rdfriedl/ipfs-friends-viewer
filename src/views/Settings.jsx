@@ -3,9 +3,9 @@ import React, { useCallback, useState } from 'react';
 import { Divider, Input, Button, FormControl, FormLabel, FormHelperText, Select, VStack } from '@chakra-ui/react';
 import { useIpfs } from '../providers/IpfsProvider';
 import { useAppSettings } from '../providers/AppSettingsProvider';
-import { PageContainer } from '../components/PageContainer.js';
+import { PageContainer } from '../components/PageContainer';
 
-export const SettingsPage = () => {
+const SettingsPage = () => {
 	const settings = useAppSettings();
 
 	const {loading: ipfsLoading} = useIpfs();
@@ -80,8 +80,10 @@ export const SettingsPage = () => {
 	)
 }
 
-export const SettingsView = () => (
+const SettingsView = () => (
 	<PageContainer>
 		<SettingsPage/>
 	</PageContainer>
 )
+
+export default SettingsView;

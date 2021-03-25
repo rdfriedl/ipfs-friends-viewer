@@ -1,5 +1,5 @@
 import { useQuery } from "react-query";
-import { useIpfs } from "../providers/IpfsProvider.js";
+import { useIpfs } from "../providers/IpfsProvider";
 
 export function useIpfsFileHash(path){
 	const { ipfs } = useIpfs();

@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useMemo } from 'react';
-import IPFS from 'ipfs';
-import ipfsHttpClient from 'ipfs-http-client';
-import {useAsync} from 'react-use';
+// import IPFS from 'ipfs';
+// import ipfsHttpClient from 'https://unpkg.com/ipfs-http-client';
+import { useAsync } from 'react-use';
 import { useAppSettings } from './AppSettingsProvider';
 
 export const IpfsContext = React.createContext();
@@ -13,8 +13,10 @@ export const IpfsProvider = ({ children, repo }) => {
 
 	const state = useAsync( async () => {
 		if( ipfsMode === 'remote' && apiUrl ) {
+			await import('https://unpkg.com/ipfs-http-client@49/dist/index.min.js');
+
 			console.info('connecting to remote node');
-			const client = await ipfsHttpClient({url: apiUrl});
+			const client = await IpfsHttpClient({url: apiUrl});
 
 			const {id} = await client.id();
 			console.log(`connected to ${id}`);
@@ -22,9 +24,10 @@ export const IpfsProvider = ({ children, repo }) => {
 			return client;
 		}
 		else if(ipfsMode === 'local'){
+			await import('https://unpkg.com/ipfs@0.54.4/dist/index.min.js');
 			console.info('starting local node');
 
-			const client = await IPFS.create({
+			const client = await Ipfs.create({
 				start: true,
 				repo,
 				preload: {

@@ -1,6 +1,6 @@
 import { useQuery } from "react-query";
 import isIpfs from 'is-ipfs';
-import { useIpfs } from "../providers/IpfsProvider.js";
+import { useIpfs } from "../providers/IpfsProvider";
 
 export function useIpfsFolder(address, opts){
 	const { ipfs } = useIpfs();

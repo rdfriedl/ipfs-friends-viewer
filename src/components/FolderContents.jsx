@@ -3,11 +3,11 @@ import { SRLWrapper } from "simple-react-lightbox";
 
 import { Wrap, WrapItem } from '@chakra-ui/react';
 
-import { useIpfsFolder } from '../hooks/useIpfsFileFolder.js';
-import { useAppSettings } from '../providers/AppSettingsProvider.js';
-import { ImageCard } from './ImageCard.js';
-import { FolderCard } from './FolderCard.js';
-import { imageTypes } from '../const.js';
+import { useIpfsFolder } from '../hooks/useIpfsFileFolder';
+import { useAppSettings } from '../providers/AppSettingsProvider';
+import { ImageCard } from './ImageCard';
+import { FolderCard } from './FolderCard';
+import { imageTypes } from '../const';
 
 export const FolderContents = ({ hash, pathname }) => {
 	const { gateway } = useAppSettings();

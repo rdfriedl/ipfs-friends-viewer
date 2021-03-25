@@ -1,15 +1,15 @@
 import React from 'react';
 import { useLocation } from 'react-router-dom';
 
-import { PageContainer } from '../components/PageContainer.js';
+import { PageContainer } from '../components/PageContainer';
 import { Box, Button, ButtonGroup, Flex } from '@chakra-ui/react';
-import { UpButton } from '../components/UpButton.js';
-import { useIpfsFileHash } from '../hooks/useIpfsFileHash.js';
-import { useGenerateThumbnailsMutation } from '../hooks/useGenerateThumbnailsMutation.js';
-import { FolderContents } from '../components/FolderContents.js';
-import { LinkButton } from '../components/LinkButton.js';
+import { UpButton } from '../components/UpButton';
+import { useIpfsFileHash } from '../hooks/useIpfsFileHash';
+import { useGenerateThumbnailsMutation } from '../hooks/useGenerateThumbnailsMutation';
+import { FolderContents } from '../components/FolderContents';
+import { LinkButton } from '../components/LinkButton';
 
-export const FolderPage = ({ pathname }) => {
+const FolderPage = ({ pathname }) => {
 	const path = pathname.replace(/^\/folder/, '') || '/';
 	const { data: folderHash, refetch: refetchHash } = useIpfsFileHash(path);
 
@@ -39,7 +39,7 @@ export const FolderPage = ({ pathname }) => {
 	)
 }
 
-export const FolderView = () => {
+const FolderView = () => {
 	const { pathname } = useLocation();
 
 	return (
@@ -48,3 +48,5 @@ export const FolderView = () => {
 		</PageContainer>
 	)
 }
+
+export default FolderView;
