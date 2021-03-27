@@ -16,7 +16,21 @@ export default defineConfig({
         start_url: ".",
         display: "standalone",
         theme_color: "#0b3a53",
-        background_color: "#ffffff"
+        background_color: "#ffffff",
+        icons: [
+          {
+            "src": "/icons/manifest-icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "maskable any"
+          },
+          {
+            "src": "/icons/manifest-icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "maskable any"
+          }
+        ]
       },
       workbox: {
         skipWaiting: true,

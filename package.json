@@ -5,7 +5,7 @@
     "start": "vite",
     "serve": "vite serve",
     "build": "vite build",
-    "postbuild": "pwa-asset-generator src/icon.png ./dist/icons -i ./dist/index.html -m ./dist/manifest.webmanifest --mstile --maskable=true",
+    "icons": "pwa-asset-generator src/icon.png ./public/icons --mstile --maskable=true",
     "deploy": "ipfs-deploy -OC --path dist"
   },
   "dependencies": {
