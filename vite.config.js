@@ -7,7 +7,7 @@ export default defineConfig({
     reactRefresh(),
     VitePWA({
       registerType: 'autoUpdate',
-      injectRegister: 'html',
+      injectRegister: 'script',
       manifest: {
         name: "IPFS Gallery",
         short_name: "IPFS Gallery",
