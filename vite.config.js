@@ -11,6 +11,7 @@ export default defineConfig({
       manifest: {
         name: "IPFS Gallery",
         short_name: "IPFS Gallery",
+        description: "a simple IPFS app for managing image galleries",
         lang: 'en',
         start_url: ".",
         display: "standalone",
