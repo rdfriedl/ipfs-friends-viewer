@@ -3,6 +3,7 @@ import { createGlobalStyle } from 'styled-components';
 import { ChakraProvider } from "@chakra-ui/react";
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { HashRouter as Router } from "react-router-dom";
+import SimpleReactLightbox from "simple-react-lightbox";
 
 import { IPFS_REPO } from '../const';
 import { IpfsProvider } from './IpfsProvider';
@@ -35,7 +36,9 @@ export const GlobalProviders = ({children}) => (
 			<QueryClientProvider client={queryClient}>
 				<AppSettingsProvider>
 					<IpfsProvider repo={IPFS_REPO}>
-						{children}
+						<SimpleReactLightbox>
+							{children}
+						</SimpleReactLightbox>
 					</IpfsProvider>
 				</AppSettingsProvider>
 			</QueryClientProvider>

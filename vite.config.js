@@ -7,6 +7,7 @@ export default defineConfig({
     reactRefresh(),
     VitePWA({
       registerType: 'autoUpdate',
+      injectRegister: 'html',
       manifest: {
         name: "IPFS Gallery",
         short_name: "IPFS Gallery",
@@ -15,13 +16,16 @@ export default defineConfig({
         display: "standalone",
         theme_color: "#000000",
         background_color: "#ffffff"
+      },
+      workbox: {
+        skipWaiting: true,
       }
     })
   ],
   build: {
     emptyOutDir: true,
     sourcemap: true,
-    target: 'esnext'
+    target: 'esnext',
   },
   define: {
     'process.env.NODE_ENV': `"${process.env.NODE_ENV || 'development'}"`

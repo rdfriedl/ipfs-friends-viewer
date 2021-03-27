@@ -1,5 +1,6 @@
-import React, { useMemo } from "react";
-import { SRLWrapper } from "simple-react-lightbox";
+import React, { useCallback, useMemo } from "react";
+import { SRLWrapper, useLightbox } from "simple-react-lightbox";
+import { useEvent } from "react-use";
 
 import { Wrap, WrapItem } from '@chakra-ui/react';
 
@@ -9,7 +10,13 @@ import { ImageCard } from './ImageCard';
 import { FolderCard } from './FolderCard';
 import { imageTypes } from '../const';
 
+const preventDefault = (fn) => e => {
+  e.preventDefault();
+  fn(e);
+}
+
 export const FolderContents = ({ hash, pathname }) => {
+  const { openLightbox, closeLightbox } = useLightbox();
 	const { gateway } = useAppSettings();
 	const { data: contents = [] } = useIpfsFolder(hash);
 	const ipfsPath = `${gateway}/ipfs/${hash}`;
@@ -23,6 +30,25 @@ export const FolderContents = ({ hash, pathname }) => {
 		() => contents.filter(f => f.type === 'file' && imageTypes.test(f.name)),
 		[contents]
 	);
+
+  const elements = images.map(image => ({
+    caption: image.name,
+    src: `${ipfsPath}/${image.name}`,
+    thumbnail: `${ipfsPath}/.thumbs/${image.name}`,
+  }));
+
+  const currentPage = location.href;
+  const handleStateChange = useCallback((e) => {
+    const isLightboxOpen = !!document.querySelector('#SRLLightbox');
+
+    if(isLightboxOpen){
+      closeLightbox();
+
+      // stay on the current page
+      history.pushState(null, null, currentPage);
+    }
+  }, [closeLightbox, currentPage])
+  useEvent('popstate', handleStateChange);
 
 	return (
     <>
@@ -41,21 +67,20 @@ export const FolderContents = ({ hash, pathname }) => {
             />
           </WrapItem>
         ))}
-      </Wrap>
-      <Wrap
-        as={SRLWrapper}
-        options={{ settings: {slideAnimationType: "both"}, caption: { showCaption: false} }}
-      >
         {images.map((image, index) => (
-          <WrapItem key={image.cid.toString()}>
+          <WrapItem key={image.name+'-'+image.cid.toString()}>
             <ImageCard
-              name={image.name}
               src={`${ipfsPath}/.thumbs/${image.name}`}
               href={`${ipfsPath}/${image.name}`}
+              onClick={preventDefault(() => openLightbox(index))}
             />
           </WrapItem>
         ))}
       </Wrap>
+      <SRLWrapper
+        elements={elements}
+        options={{ settings: {slideAnimationType: "both"}, caption: { showCaption: false} }}
+      />
     </>
   );
 }

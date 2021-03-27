@@ -1,12 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { registerSW } from 'virtual:pwa-register'
+import { GlobalProviders } from './providers/GlobalProviders.jsx';
 
 import App from './views/App';
 
 ReactDOM.render(
-  <App />,
+  <GlobalProviders>
+    <App />
+  </GlobalProviders>,
   document.getElementById('root')
 );
-
-registerSW();
