@@ -11,11 +11,11 @@ export default defineConfig({
       manifest: {
         name: "IPFS Gallery",
         short_name: "IPFS Gallery",
-        description: "a simple IPFS app for managing image galleries",
+        description: "A simple IPFS app for managing image galleries",
         lang: 'en',
         start_url: ".",
         display: "standalone",
-        theme_color: "#000000",
+        theme_color: "#0b3a53",
         background_color: "#ffffff"
       },
       workbox: {
