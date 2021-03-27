@@ -1,7 +1,7 @@
 {
 	"build": {
 		"image": "node:14",
-		"command": "npm install && npm run build",
+		"command": "yarn install && yarn build",
 		"publicDir": "dist",
 		"baseDir": "./"
 	}
