@@ -1,0 +1,23 @@
+{
+	"compilerOptions": {
+		"target": "ESNext",
+		"lib": ["DOM", "DOM.Iterable", "ESNext"],
+		"module": "ESNext",
+		"allowJs": true,
+		"sourceMap": true,
+		"inlineSources": true,
+		"strict": true,
+		"noImplicitReturns": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"moduleResolution": "node",
+		"allowSyntheticDefaultImports": true,
+		"esModuleInterop": true,
+		"jsx": "react",
+		"declaration": true,
+		"outDir": "./dist",
+		"skipLibCheck": true
+	},
+	"include": ["src", "config"],
+	"exclude": ["node_modules", "dist"]
+}

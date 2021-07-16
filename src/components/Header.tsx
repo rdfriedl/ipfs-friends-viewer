@@ -1,9 +1,9 @@
-import React from 'react';
+import React from "react";
 
-import {Box, Flex, ButtonGroup} from '@chakra-ui/react'
-import { LinkButton } from './LinkButton';
+import { Box, Flex, ButtonGroup } from "@chakra-ui/react";
+import { LinkButton } from "./LinkButton";
 
-export const Header = () => (
+export const Header: React.FC = () => (
 	<Box as="nav" w="100%" padding="2">
 		<Flex justifyContent="space-between">
 			<ButtonGroup>
@@ -13,4 +13,4 @@ export const Header = () => (
 			</ButtonGroup>
 		</Flex>
 	</Box>
-)
+);

@@ -1,12 +1,12 @@
-import React, { Suspense } from 'react';
-import { useLocation } from 'react-router-dom';
-import isIpfs from 'is-ipfs';
+import React, { Suspense } from "react";
+import { useLocation } from "react-router-dom";
+import isIpfs from "is-ipfs";
 
-import { Box, ButtonGroup, Flex } from '@chakra-ui/react';
-import { FolderContents } from '../components/FolderContents';
-import { PageContainer } from '../components/PageContainer';
-import { UpButton } from '../components/UpButton';
-import { useIpfsFileHash } from '../hooks/useIpfsFileHash';
+import { Box, ButtonGroup, Flex } from "@chakra-ui/react";
+import { FolderContents } from "../components/FolderContents";
+import { PageContainer } from "../components/PageContainer";
+import { UpButton } from "../components/UpButton";
+import { useIpfsFileHash } from "../hooks/useIpfsFileHash";
 
 const isRootIpfsPath = /\/ip(fs|ns)\/[^\/]+$/i;
 
@@ -27,17 +27,15 @@ const ReadonlyGalleryPage = () => {
 					)}
 				</Flex>
 			</Box>
-			{folderHash && (
-				<FolderContents hash={folderHash} pathname={pathname}/>
-			)}
+			{folderHash && <FolderContents hash={folderHash} pathname={pathname} />}
 		</div>
-	)
-}
+	);
+};
 
 const ReadonlyGalleryView = () => (
 	<PageContainer>
-		<ReadonlyGalleryPage/>
+		<ReadonlyGalleryPage />
 	</PageContainer>
-)
+);
 
 export default ReadonlyGalleryView;
