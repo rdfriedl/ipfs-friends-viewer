@@ -3,10 +3,10 @@ import { createGlobalStyle } from "styled-components";
 import { ChakraProvider } from "@chakra-ui/react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { HashRouter as Router } from "react-router-dom";
-// import SimpleReactLightbox from "simple-react-lightbox";
 
 import { IPFS_REPO } from "../const";
 import { IpfsProvider } from "./IpfsProvider";
+import { KeysProvider } from "./KeysProvider";
 import { AppSettingsProvider } from "./AppSettingsProvider";
 
 const GlobalStyles = createGlobalStyle`
@@ -39,10 +39,9 @@ export const GlobalProviders: React.FC = ({ children }) => (
 		<ChakraProvider>
 			<QueryClientProvider client={queryClient}>
 				<AppSettingsProvider>
-					<IpfsProvider repo={IPFS_REPO}>
-						{/* <SimpleReactLightbox>{children}</SimpleReactLightbox> */}
-						{children}
-					</IpfsProvider>
+					<KeysProvider>
+						<IpfsProvider repo={IPFS_REPO}>{children}</IpfsProvider>
+					</KeysProvider>
 				</AppSettingsProvider>
 			</QueryClientProvider>
 		</ChakraProvider>

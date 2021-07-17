@@ -1,6 +1,5 @@
 import React from "react";
 import { Formik, Form } from "formik";
-import { encryptKey, readPrivateKey } from "openpgp";
 
 import {
 	Modal,
@@ -16,16 +15,19 @@ import {
 	ModalFooter,
 	Textarea,
 	VStack,
+	useToast,
 } from "@chakra-ui/react";
-import { useAppSettings } from "../providers/AppSettingsProvider";
 import { PageContainer } from "../components/PageContainer";
+import { useKeys } from "../providers/KeysProvider";
+import { useHistory } from "react-router-dom";
 
 const SetupPage = () => {
-	const settings = useAppSettings();
+	const toast = useToast();
+	const history = useHistory();
+	const { importPrivateKey } = useKeys();
 	const initialValues = {
-		email: settings.email,
-		privateKey: settings.privateKey,
-		password: "",
+		privateKey: "",
+		passphrase: "",
 	};
 
 	return (
@@ -36,12 +38,12 @@ const SetupPage = () => {
 					initialValues={initialValues}
 					onSubmit={async (values) => {
 						try {
-							const privateKey = await encryptKey({
-								privateKey: await readPrivateKey({ armoredKey: values.privateKey as string }),
-								passphrase: values.password as string,
-							});
-							settings.setPrivateKey(privateKey.armor());
-						} catch (e) {}
+							await importPrivateKey(values.privateKey as string, values.passphrase as string);
+							toast({ title: "Imported key", status: "success" });
+							history.push("/");
+						} catch (e) {
+							toast({ title: "Failed to import key", status: "error", description: e.message });
+						}
 					}}
 				>
 					{({ values, handleChange }) => (
@@ -53,24 +55,22 @@ const SetupPage = () => {
 										<FormLabel>Private Key</FormLabel>
 										<Textarea value={values.privateKey ?? ""} name="privateKey" onChange={handleChange} required />
 									</FormControl>
-									<FormControl id="password">
-										<FormLabel>password</FormLabel>
+									<FormControl id="passphrase">
+										<FormLabel>Passphrase</FormLabel>
 										<Input
 											type="password"
-											value={values.password ?? ""}
-											name="password"
+											value={values.passphrase ?? ""}
+											name="passphrase"
 											onChange={handleChange}
 											required
 										/>
-										<FormHelperText>
-											This password will be used to protect the private key when its being stored
-										</FormHelperText>
+										<FormHelperText>If the private key already has a passphrase this will be ignored</FormHelperText>
 									</FormControl>
 								</VStack>
 							</ModalBody>
 							<ModalFooter>
 								<Button colorScheme="blue" type="submit">
-									Setup
+									Import
 								</Button>
 							</ModalFooter>
 						</Form>

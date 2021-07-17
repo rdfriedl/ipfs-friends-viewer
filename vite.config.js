@@ -1,13 +1,15 @@
-import path from 'path';
+import path from "path";
 import { defineConfig } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
 import reactRefresh from "@vitejs/plugin-react-refresh";
+import replace from "@rollup/plugin-replace";
 
 export default defineConfig({
 	resolve: {
 		alias: {
 			"ipfs-core": path.resolve(__dirname, "node_modules/ipfs-core/dist/index.min.js"),
-			"ipfs-http-client": path.resolve(__dirname, "node_modules/ipfs-http-client/dist/index.min.js")
+			"ipfs-http-client": path.resolve(__dirname, "node_modules/ipfs-http-client/dist/index.min.js"),
+			opfspgp: path.resolve(__dirname, "node_modules/openpgp/dist/openpgp.mjs"),
 		},
 	},
 	plugins: [
@@ -48,9 +50,11 @@ export default defineConfig({
 		emptyOutDir: true,
 		sourcemap: true,
 		target: "esnext",
-	},
-	define: {
-		"process.env.NODE_ENV": `"${process.env.NODE_ENV || "development"}"`,
+		plugins: [
+			replace({
+				"e.process.env.NODE_ENV": "replaced",
+			}),
+		],
 	},
 	server: {
 		port: 8080,

@@ -13,12 +13,12 @@ type IpfsProviderProps = {
 };
 
 export const IpfsProvider: React.FC<IpfsProviderProps> = ({ children, repo }) => {
-	const { ipfsMode, apiUrl } = useAppSettings();
+	const { ipfsMode, ipfsApiUrl } = useAppSettings();
 
 	const state = useAsync(async () => {
-		if (ipfsMode === "remote" && apiUrl) {
+		if (ipfsMode === "remote" && ipfsApiUrl) {
 			console.info("connecting to remote node");
-			const client = await createIpfsHttpClient({ url: apiUrl });
+			const client = await createIpfsHttpClient({ url: ipfsApiUrl });
 			const { id } = await client.id();
 			console.log(`connected to ${id}`);
 			return client;
@@ -37,7 +37,7 @@ export const IpfsProvider: React.FC<IpfsProviderProps> = ({ children, repo }) =>
 		} else {
 			return null;
 		}
-	}, [repo, apiUrl, ipfsMode]);
+	}, [repo, ipfsApiUrl, ipfsMode]);
 
 	const context = useMemo(
 		() => ({
@@ -51,7 +51,7 @@ export const IpfsProvider: React.FC<IpfsProviderProps> = ({ children, repo }) =>
 	useEffect(() => {
 		// @ts-ignore
 		window.ipfs = state.value;
-	}, [state.value])
+	}, [state.value]);
 
 	return <IpfsContext.Provider value={context}>{children}</IpfsContext.Provider>;
 };

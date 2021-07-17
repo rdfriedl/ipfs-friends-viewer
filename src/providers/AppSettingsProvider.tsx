@@ -12,7 +12,7 @@ const useAppSettingsContext = () => {
 	const [ipfsMode, setIpfsMode, clearIpfsMode] = useLocalStorage("ipfs-mode", "local");
 	const [email, setEmail, clearEmail] = useLocalStorage("email", "");
 	const [privateKey, setPrivateKey, clearPrivateKey] = useLocalStorage("private-key", "");
-	const [apiUrl, setApiUrl, clearApiUrl] = useLocalStorage("api-url", "http://localhost:3000");
+	const [ipfsApiUrl, setIpfsApiUrl, clearIpfsApiUrl] = useLocalStorage("ipfs-api-url", "http://localhost:5001");
 	const [gateway, setGateway, clearGateway] = useLocalStorage("ipfs-gateway", "https://ipfs.io");
 	const [thumbor, setThumbor, clearThumbor] = useLocalStorage("thumbor-url", "");
 	const [rootFolder, setRootFolder, clearRootFolder] = useLocalStorage("galleries", "/galleries");
@@ -22,10 +22,10 @@ const useAppSettingsContext = () => {
 
 	const clear = useCallback(() => {
 		clearSetup();
-		clearApiUrl();
+		clearIpfsApiUrl();
 		clearRootFolder();
 		clearThumbor();
-	}, [clearSetup, clearApiUrl, clearRootFolder, clearThumbor]);
+	}, [clearSetup, clearIpfsApiUrl, clearRootFolder, clearThumbor]);
 
 	return {
 		setup: !!setup,
@@ -40,9 +40,9 @@ const useAppSettingsContext = () => {
 		privateKey,
 		setPrivateKey,
 		clearPrivateKey,
-		apiUrl,
-		setApiUrl,
-		clearApiUrl,
+		ipfsApiUrl,
+		setIpfsApiUrl,
+		clearIpfsApiUrl,
 		gateway,
 		setGateway,
 		clearGateway,
