@@ -17,6 +17,7 @@
 		"formik": "^2.2.9",
 		"framer-motion": "^4.1.17",
 		"ipfs-core": "^0.8.0",
+		"ipfs-core-types": "^0.5.2",
 		"ipfs-http-client": "^50.1.2",
 		"is-ipfs": "^6.0.1",
 		"openpgp": "^5.0.0-3",

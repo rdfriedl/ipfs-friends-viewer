@@ -1,8 +1,12 @@
 import React from "react";
-import { Link, Route } from "react-router-dom";
+import { Link, Route, RouteProps } from "react-router-dom";
 import { useIpfs } from "../providers/IpfsProvider";
 
-export const IpfsRoute = ({ children, direct = "/setup", ...props }) => {
+type IpfsRouteProps = RouteProps & {
+	redirect?: string;
+};
+
+export const IpfsRoute: React.FC<IpfsRouteProps> = ({ children, redirect = "/setup", ...props }) => {
 	const { loading, ipfs } = useIpfs();
 
 	if (!ipfs) {
@@ -12,7 +16,7 @@ export const IpfsRoute = ({ children, direct = "/setup", ...props }) => {
 			return (
 				<>
 					<h1>looks like IPFS is not working</h1>
-					<Link to={direct}>Go to setup</Link>
+					<Link to={redirect}>Go to setup</Link>
 				</>
 			);
 		}

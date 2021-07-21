@@ -50,11 +50,17 @@ const SettingsPage = () => {
 						<VStack spacing={2}>
 							<FormControl id="gateway">
 								<FormLabel>IPFS Gateway Url</FormLabel>
-								<Input type="url" value={values.gateway ?? ""} name="gateway" onChange={handleChange} list="gatewayOptions"/>
+								<Input
+									type="url"
+									value={values.gateway ?? ""}
+									name="gateway"
+									onChange={handleChange}
+									list="gatewayOptions"
+								/>
 								<FormHelperText>The URL to the api endpoint of the IPFS node</FormHelperText>
 								<datalist id="gatewayOptions">
-									<option value="https://ipfs.io"/>
-									<option value="https://localhost:8080"/>
+									<option value="https://ipfs.io" />
+									<option value="https://localhost:8080" />
 								</datalist>
 							</FormControl>
 							<FormControl id="ipfsMode">

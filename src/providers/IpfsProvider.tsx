@@ -1,10 +1,18 @@
 import React, { useContext, useEffect, useMemo } from "react";
+import { useAsync } from "react-use";
+
+import { IPFS } from "ipfs-core-types";
 import { create as createIpfsNode } from "ipfs-core";
 import { create as createIpfsHttpClient } from "ipfs-http-client";
-import { useAsync } from "react-use";
 import { useAppSettings } from "./AppSettingsProvider";
 
-export const IpfsContext = React.createContext({});
+type IpfsContext = {
+	error?: Error;
+	loading: boolean;
+	ipfs?: IPFS | null;
+};
+
+export const IpfsContext = React.createContext<IpfsContext>({ loading: true });
 
 export const useIpfs = () => useContext(IpfsContext);
 
@@ -39,7 +47,7 @@ export const IpfsProvider: React.FC<IpfsProviderProps> = ({ children, repo }) =>
 		}
 	}, [repo, ipfsApiUrl, ipfsMode]);
 
-	const context = useMemo(
+	const context = useMemo<IpfsContext>(
 		() => ({
 			error: state.error,
 			loading: state.loading,
