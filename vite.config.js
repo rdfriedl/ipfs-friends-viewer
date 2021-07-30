@@ -9,7 +9,7 @@ export default defineConfig({
 		alias: {
 			"ipfs-core": path.resolve(__dirname, "node_modules/ipfs-core/dist/index.min.js"),
 			"ipfs-http-client": path.resolve(__dirname, "node_modules/ipfs-http-client/dist/index.min.js"),
-			opfspgp: path.resolve(__dirname, "node_modules/openpgp/dist/openpgp.mjs"),
+			openpgp: path.resolve(__dirname, "node_modules/openpgp/dist/lightweight/openpgp.mjs"),
 		},
 	},
 	plugins: [
@@ -52,7 +52,7 @@ export default defineConfig({
 		target: "esnext",
 		plugins: [
 			replace({
-				"e.process.env.NODE_ENV": "replaced",
+				"globalThis.process.env.NODE_ENV": "replaced",
 			}),
 		],
 	},

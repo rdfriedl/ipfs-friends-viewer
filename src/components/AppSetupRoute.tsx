@@ -2,10 +2,11 @@ import React from "react";
 import { Redirect, Route, RouteProps } from "react-router-dom";
 
 import { useKeys } from "../providers/KeysProvider";
+import { UnlockKeyModal } from "./UnlockKeyModal";
 
 type AppSetupRouteProps = {
 	path: RouteProps["path"];
-	exact: RouteProps["exact"];
+	exact?: RouteProps["exact"];
 	component: RouteProps["component"];
 };
 
@@ -13,16 +14,16 @@ export const AppSetupRoute = ({ component, ...props }: AppSetupRouteProps) => {
 	const { setup, locked } = useKeys();
 
 	const isReady = setup && !locked;
-	let redirect: React.ReactNode = null;
+	let replaceContents: React.ReactNode = null;
 	if (!setup) {
-		redirect = <Redirect to="/setup" />;
+		replaceContents = <Redirect to="/setup" />;
 	} else if (locked) {
-		redirect = <Redirect to="/unlock" />;
+		replaceContents = <UnlockKeyModal isOpen />;
 	}
 
 	return (
 		<Route component={isReady ? component : undefined} {...props}>
-			{redirect}
+			{replaceContents}
 		</Route>
 	);
 };

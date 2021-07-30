@@ -1,83 +1,18 @@
-import React, { useRef } from "react";
-import { Formik, Form } from "formik";
+import React from "react";
 import { useHistory } from "react-router-dom";
-
-import {
-	Button,
-	FormControl,
-	FormLabel,
-	Input,
-	useToast,
-	Modal,
-	ModalOverlay,
-	ModalContent,
-	ModalHeader,
-	ModalBody,
-	ModalFooter,
-} from "@chakra-ui/react";
-import { useKeys } from "../providers/KeysProvider";
+import { UnlockKeyModal } from "../components/UnlockKeyModal";
 
 export const UnlockPage = () => {
-	const toast = useToast();
-	const { unlockKey, reset } = useKeys();
 	const history = useHistory();
-	const initialFocus = useRef<HTMLInputElement>(null);
 
-	const initialValues = {
-		passphrase: "",
+	const onUnlock = () => {
+		history.replace("/");
 	};
-
-	const handleDeleteKey = () => {
-		reset();
+	const onReset = () => {
 		history.replace("/setup");
 	};
 
-	return (
-		<Modal isOpen onClose={() => {}} initialFocusRef={initialFocus} isCentered>
-			<ModalOverlay />
-			<ModalContent>
-				<Formik
-					initialValues={initialValues}
-					onSubmit={async ({ passphrase }) => {
-						try {
-							await unlockKey(passphrase);
-							toast({ title: "Unlocked Key!", status: "success" });
-							history.replace("/");
-						} catch (e) {
-							toast({ title: "Failed to decrypt key", status: "error", description: e.message });
-						}
-					}}
-				>
-					{({ values, handleChange }) => (
-						<Form>
-							<ModalHeader>Unlock private key</ModalHeader>
-							<ModalBody>
-								<FormControl id="passphrase">
-									<FormLabel>Passphrase</FormLabel>
-									<Input
-										type="password"
-										name="passphrase"
-										value={values.passphrase}
-										onChange={handleChange}
-										ref={initialFocus}
-									/>
-								</FormControl>
-							</ModalBody>
-
-							<ModalFooter>
-								<Button type="button" onClick={handleDeleteKey} mr="3">
-									Delete key
-								</Button>
-								<Button colorScheme="blue" type="submit">
-									Unlock
-								</Button>
-							</ModalFooter>
-						</Form>
-					)}
-				</Formik>
-			</ModalContent>
-		</Modal>
-	);
+	return <UnlockKeyModal isOpen onUnlock={onUnlock} onReset={onReset} />;
 };
 
 export const UnlockView = () => <UnlockPage />;

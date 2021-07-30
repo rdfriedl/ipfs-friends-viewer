@@ -1,5 +1,5 @@
-import React, { useCallback, useContext, useState } from "react";
-import { createMessage, decryptKey, encryptKey, PrivateKey, readPrivateKey, sign } from "openpgp";
+import React, { useCallback, useContext, useEffect, useState } from "react";
+import { PublicKey, decryptKey, encryptKey, PrivateKey, readPrivateKey, readKey } from "openpgp";
 import { useLocalStorage } from "react-use";
 
 type KeysProviderContext = ReturnType<typeof useKeysProviderState>;
@@ -12,20 +12,40 @@ const useKeysProviderState = () => {
 	const [armoredPrivateKey, setArmoredPrivateKey, clearArmoredPrivateKey] = useLocalStorage<string | undefined>(
 		"private-key"
 	);
+	const [armoredPublicKey, setArmoredPublicKey, clearArmoredPublicKey] = useLocalStorage<string | undefined>(
+		"public-key"
+	);
 	const [privateKey, setPrivateKey] = useState<PrivateKey>();
+	const [publicKey, setPublicKey] = useState<PublicKey>();
 
-	const importPrivateKey = useCallback(
-		async (armoredKey: string, passphrase: string) => {
-			const key = await readPrivateKey({ armoredKey });
+	useEffect(() => {
+		if (armoredPublicKey) {
+			readKey({ armoredKey: armoredPublicKey }).then((key) => setPublicKey(key));
+		}
+	}, [armoredPublicKey]);
 
-			if (key.isDecrypted()) {
-				const encryptedKey = await encryptKey({ privateKey: key, passphrase });
+	const importKeyPair = useCallback(
+		async ({
+			armoredPrivateKey,
+			armoredPublicKey,
+			passphrase,
+		}: {
+			armoredPrivateKey: string;
+			armoredPublicKey: string;
+			passphrase: string;
+		}) => {
+			const privateKey = await readPrivateKey({ armoredKey: armoredPrivateKey });
+
+			if (privateKey.isDecrypted()) {
+				const encryptedKey = await encryptKey({ privateKey: privateKey, passphrase });
 				setArmoredPrivateKey(encryptedKey.armor());
 			} else {
-				setArmoredPrivateKey(key.armor());
+				setArmoredPrivateKey(privateKey.armor());
 			}
+
+			setArmoredPublicKey(armoredPublicKey);
 		},
-		[setArmoredPrivateKey]
+		[setArmoredPrivateKey, setArmoredPublicKey]
 	);
 
 	const unlockKey = useCallback(
@@ -46,13 +66,19 @@ const useKeysProviderState = () => {
 		[armoredPrivateKey, setPrivateKey]
 	);
 
+	const reset = useCallback(() => {
+		clearArmoredPrivateKey();
+		clearArmoredPublicKey();
+	}, [clearArmoredPrivateKey, clearArmoredPublicKey]);
+
 	return {
-		setup: !!armoredPrivateKey,
+		setup: !!armoredPrivateKey && !!armoredPublicKey,
 		locked: !privateKey || !privateKey.isDecrypted(),
 		privateKey,
+		publicKey,
 		unlockKey,
-		importPrivateKey,
-		reset: clearArmoredPrivateKey,
+		importKeyPair,
+		reset,
 	};
 };
 

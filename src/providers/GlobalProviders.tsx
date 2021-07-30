@@ -8,6 +8,7 @@ import { IPFS_REPO } from "../const";
 import { IpfsProvider } from "./IpfsProvider";
 import { KeysProvider } from "./KeysProvider";
 import { AppSettingsProvider } from "./AppSettingsProvider";
+import { DevicesProvider } from "./DevicesProvider";
 
 const GlobalStyles = createGlobalStyle`
 	html {
@@ -40,7 +41,9 @@ export const GlobalProviders: React.FC = ({ children }) => (
 			<QueryClientProvider client={queryClient}>
 				<AppSettingsProvider>
 					<KeysProvider>
-						<IpfsProvider repo={IPFS_REPO}>{children}</IpfsProvider>
+						<DevicesProvider>
+							<IpfsProvider repo={IPFS_REPO}>{children}</IpfsProvider>
+						</DevicesProvider>
 					</KeysProvider>
 				</AppSettingsProvider>
 			</QueryClientProvider>

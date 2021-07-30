@@ -24,9 +24,10 @@ import { useHistory } from "react-router-dom";
 const SetupPage = () => {
 	const toast = useToast();
 	const history = useHistory();
-	const { importPrivateKey } = useKeys();
+	const { importKeyPair } = useKeys();
 	const initialValues = {
 		privateKey: "",
+		publicKey: "",
 		passphrase: "",
 	};
 
@@ -38,7 +39,11 @@ const SetupPage = () => {
 					initialValues={initialValues}
 					onSubmit={async (values) => {
 						try {
-							await importPrivateKey(values.privateKey as string, values.passphrase as string);
+							await importKeyPair({
+								armoredPrivateKey: values.privateKey,
+								armoredPublicKey: values.publicKey,
+								passphrase: values.passphrase,
+							});
 							toast({ title: "Imported key", status: "success" });
 							history.push("/");
 						} catch (e) {
@@ -51,6 +56,10 @@ const SetupPage = () => {
 							<ModalHeader>Setup</ModalHeader>
 							<ModalBody>
 								<VStack>
+									<FormControl id="publicKey">
+										<FormLabel>Public Key</FormLabel>
+										<Textarea value={values.publicKey ?? ""} name="publicKey" onChange={handleChange} required />
+									</FormControl>
 									<FormControl id="privateKey">
 										<FormLabel>Private Key</FormLabel>
 										<Textarea value={values.privateKey ?? ""} name="privateKey" onChange={handleChange} required />
