@@ -7,6 +7,8 @@ import { useAppSettings } from "../providers/AppSettingsProvider";
 type FileBackup = {
 	filename: string;
 	fileHash: string;
+	mimeType: string | null;
+	ipfsHash: string;
 };
 type FolderBackup = {
 	name: string;
@@ -35,6 +37,10 @@ export function useDeviceFolderMetadata(ipnsHash: string, folder: string) {
 			});
 			return JSON.parse(decrypted.data) as BackupFolderMetadata;
 		},
-		{ enabled: !!ipfs && setup && !locked }
+		{
+			enabled: !!ipfs && setup && !locked,
+			staleTime: 10 * 1000,
+			refetchOnWindowFocus: false,
+		}
 	);
 }

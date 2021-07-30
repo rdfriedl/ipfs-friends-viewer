@@ -1,5 +1,5 @@
 import React from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
 
 import { PageContainer } from "../components/PageContainer";
 import { Box, ButtonGroup, Flex, Wrap, WrapItem } from "@chakra-ui/react";
@@ -32,7 +32,7 @@ const FolderPage = ({ ipns, path }: FolderPageProps) => {
 				))}
 				{metadata?.files.map((file) => (
 					<WrapItem key={file.fileHash}>
-						<Box as="a" borderWidth="1px" borderRadius="lg" overflow="hidden" py="2" px="4">
+						<Box as={Link} borderWidth="1px" borderRadius="lg" overflow="hidden" py="2" px="4" to={`/image/${file.ipfsHash}`}>
 							{file.filename}
 						</Box>
 					</WrapItem>
