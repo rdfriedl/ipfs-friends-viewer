@@ -2,36 +2,14 @@ import { decrypt, readMessage } from "openpgp";
 import { useQuery } from "react-query";
 import { useAppSettings } from "../providers/AppSettingsProvider";
 import { useKeys } from "../providers/KeysProvider";
+import { readUint8Stream } from "../helpers/typed-array";
 
-async function readUint8Stream(stream: ReadableStream<Uint8Array>){
-	const reader = stream.getReader();
-
-	const arrays: Uint8Array[] = [];
-	let done = false;
-	while (!done) {
-		const result = await reader.read();
-		if (result.done) {
-			done = true;
-			break;
-		}
-		if (result.value) arrays.push(result.value);
-	}
-	const merged = new Uint8Array(arrays.reduce((length, arr) => length + arr.length, 0));
-	let offset = 0;
-	for (const array of arrays) {
-		merged.set(array, offset);
-		offset += array.length;
-	}
-
-	return merged;
-}
-
-export function useDecryptedFile(ipfsHash?: string, mimeType?: string){
+export function useDecryptedFile(ipfsHash?: string, mimeType?: string | null) {
 	const { gateway } = useAppSettings();
 	const { privateKey, publicKey } = useKeys();
 
 	return useQuery<Blob, Error>(
-		["decrypt", ipfsHash],
+		["useDecryptedFile", ipfsHash, mimeType],
 		async () => {
 			const res = await fetch(new URL(`/ipfs/${ipfsHash}`, gateway).href);
 			if (!res.body) throw new Error("Failed to fetch image");
@@ -45,7 +23,7 @@ export function useDecryptedFile(ipfsHash?: string, mimeType?: string){
 			});
 
 			const merged = await readUint8Stream(decrypted.data as ReadableStream<Uint8Array>);
-			return new Blob([merged], { type: mimeType });
+			return new Blob([merged], { type: mimeType ?? undefined });
 		},
 		{
 			enabled: !!privateKey && !!publicKey && !!gateway && !!ipfsHash,

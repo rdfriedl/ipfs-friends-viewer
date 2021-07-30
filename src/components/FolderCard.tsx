@@ -10,7 +10,7 @@ export type FolderCardProps = {
 
 export const FolderCard = ({ name, to, thumbnails }: FolderCardProps) => (
 	<LinkBox maxW="sm" borderWidth="1px" borderRadius="lg" overflow="hidden">
-		{thumbnails ? (
+		{/* {thumbnails ? (
 			<Grid templateColumns="1fr 1fr" templateRows="1fr 1fr">
 				{thumbnails.map((src) => (
 					<Image key={src} src={src} />
@@ -18,7 +18,7 @@ export const FolderCard = ({ name, to, thumbnails }: FolderCardProps) => (
 			</Grid>
 		) : (
 			<Image src="https://placehold.co/200x200" />
-		)}
+		)} */}
 		<Box p="4">
 			<LinkOverlay as={Link} to={to}>
 				{name}

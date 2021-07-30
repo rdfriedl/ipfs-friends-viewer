@@ -4,17 +4,17 @@ import { useIpfs } from "../providers/IpfsProvider";
 import { useKeys } from "../providers/KeysProvider";
 import { useAppSettings } from "../providers/AppSettingsProvider";
 
-type FileBackup = {
+export type FileBackup = {
 	filename: string;
 	fileHash: string;
 	mimeType: string | null;
 	ipfsHash: string;
 };
-type FolderBackup = {
+export type FolderBackup = {
 	name: string;
 	hash: string;
 };
-type BackupFolderMetadata = {
+export type BackupFolderMetadata = {
 	files: FileBackup[];
 	folders: FolderBackup[];
 };
