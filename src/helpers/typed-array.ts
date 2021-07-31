@@ -5,7 +5,7 @@ export async function readUint8Stream(stream: ReadableStream<Uint8Array> | WebSt
 
 	const arrays: Uint8Array[] = [];
 	while (true) {
-		const {done, value} = await reader.read();
+		const { done, value } = await reader.read();
 		if (done || !value) break;
 		if (value) arrays.push(value);
 	}
@@ -21,4 +21,4 @@ async function concatUint8Arrays(arrays: Uint8Array[]) {
 		offset += array.length;
 	}
 	return merged;
-};
+}

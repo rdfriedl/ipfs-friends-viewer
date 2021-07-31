@@ -1,16 +1,7 @@
 import React from "react";
 
 import { Formik, Form } from "formik";
-import {
-	Input,
-	Button,
-	FormControl,
-	FormLabel,
-	FormHelperText,
-	Select,
-	VStack,
-	Container,
-} from "@chakra-ui/react";
+import { Input, Button, FormControl, FormLabel, FormHelperText, Select, VStack, Container } from "@chakra-ui/react";
 import { useIpfs } from "../providers/IpfsProvider";
 import { useAppSettings } from "../providers/AppSettingsProvider";
 import { PageContainer } from "../components/PageContainer";
@@ -56,10 +47,14 @@ const SettingsPage = () => {
 									onChange={handleChange}
 									list="gatewayOptions"
 								/>
-								<FormHelperText>The URL to the api endpoint of the IPFS node</FormHelperText>
+								<FormHelperText>The URL to the api endpoint of the IPFS node (find <a href="https://ipfs.github.io/public-gateway-checker/" target="_blank">public gateway</a>)</FormHelperText>
 								<datalist id="gatewayOptions">
 									<option value="https://ipfs.io" />
-									<option value="https://localhost:8080" />
+									<option value="http://localhost:8080" />
+									<option value="https://dweb.link" />
+									<option value="https://infura-ipfs.io" />
+									<option value="https://cloudflare-ipfs.com" />
+									<option value="https://gateway.pinata.cloud" />
 								</datalist>
 							</FormControl>
 							<FormControl id="ipfsMode">

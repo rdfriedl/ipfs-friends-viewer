@@ -31,8 +31,8 @@ type FolderSlideshowModalProps = {
 
 export const FolderSlideshowModal = ({ files, index = 0, setIndex, isOpen, onClose }: FolderSlideshowModalProps) => {
 	const currentFile = files[index];
-	const nextFile = files[index+1];
-	const prevFile = files[index-1];
+	const nextFile = files[index + 1];
+	const prevFile = files[index - 1];
 
 	const { data, isLoading } = useDecryptedFile(currentFile?.ipfsHash, currentFile?.mimeType);
 	useDecryptedFile(nextFile?.ipfsHash, nextFile?.mimeType);
