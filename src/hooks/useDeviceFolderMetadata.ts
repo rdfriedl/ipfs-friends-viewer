@@ -27,8 +27,10 @@ export function useDeviceFolderMetadata(ipnsHash: string, folder: string) {
 	return useQuery<BackupFolderMetadata, Error>(
 		["device", ipnsHash, folder, "metadata"],
 		async () => {
-			const data = await fetch(new URL(`/ipns/${ipnsHash}/${folder}/metadata`, gateway).href).then((res) => res.text());
-			if (!data) throw new Error("unable to fetch device info");
+			const res = await fetch(new URL(`/ipns/${ipnsHash}/${folder}/metadata`, gateway).href);
+			if (!res.ok) throw new Error("unable to fetch device info");
+			const data = await res.text();
+
 			const decrypted = await decrypt({
 				message: await readMessage({ armoredMessage: data }),
 				decryptionKeys: privateKey,

@@ -42,7 +42,7 @@ export const FolderContentsTable = ({ metadata, onClickFolder, onClickFile }: Fo
 				))}
 				{metadata.files.map((file) => (
 					<ClickableTr
-						key={file.fileHash}
+						key={file.filename+'-'+file.fileHash}
 						onClick={onClickFile ? () => onClickFile(file) : undefined}
 						tabIndex={onClickFolder ? 0 : undefined}
 					>

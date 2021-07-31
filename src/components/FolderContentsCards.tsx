@@ -46,7 +46,7 @@ export const FolderContentsCards = ({ metadata, onClickFolder, onClickFile }: Fo
 			</WrapItem>
 		))}
 		{metadata?.files.map((file) => (
-			<WrapItem key={file.fileHash}>
+			<WrapItem key={file.filename+'-'+file.fileHash}>
 				<Card onClick={onClickFile ? () => onClickFile(file) : undefined}>{file.filename}</Card>
 			</WrapItem>
 		))}
