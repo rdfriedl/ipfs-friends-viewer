@@ -20,6 +20,11 @@ const GlobalStyles = createGlobalStyle`
 		height: 100%;
 		overflow: hidden;
 	}
+
+	#root {
+		display: flex;
+		flex-direction: column;
+	}
 `;
 
 const queryClient = new QueryClient({

@@ -7,8 +7,7 @@ export function useObjectUrl(object?: Blob) {
 		if (object) {
 			const url = URL.createObjectURL(object);
 			setUrl(url);
-		}
-		else {
+		} else {
 			setUrl(undefined);
 		}
 

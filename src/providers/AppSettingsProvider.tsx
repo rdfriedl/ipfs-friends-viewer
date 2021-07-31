@@ -8,22 +8,24 @@ const IpfsSettingsContext = React.createContext({} as AppSettingsContextType);
 export const useAppSettings = () => useContext(IpfsSettingsContext);
 
 const useAppSettingsContext = () => {
-	const [setup, setSetup, clearSetup] = useLocalStorage("setup", false);
 	const [gateway, setGateway, clearGateway] = useLocalStorage("ipfs-gateway", "https://ipfs.io");
 	const [ipfsMode, setIpfsMode, clearIpfsMode] = useLocalStorage("ipfs-mode", "local");
 	const [ipfsApiUrl, setIpfsApiUrl, clearIpfsApiUrl] = useLocalStorage("ipfs-api-url", "http://localhost:5001");
+	const [folderDisplayMode, setFolderDisplayMode, clearFolderDisplayMode] = useLocalStorage(
+		"folder-display-mode",
+		"cards"
+	);
 
 	const update = useUpdate();
 	useEvent("storage", update, window);
 
 	const clear = useCallback(() => {
-		clearSetup();
+		clearGateway();
+		clearIpfsMode();
 		clearIpfsApiUrl();
-	}, [clearSetup, clearIpfsApiUrl]);
+	}, [clearGateway, clearIpfsMode, clearIpfsApiUrl]);
 
 	return {
-		setSetup,
-		clearSetup,
 		ipfsMode,
 		setIpfsMode,
 		clearIpfsMode,
@@ -33,6 +35,9 @@ const useAppSettingsContext = () => {
 		gateway,
 		setGateway,
 		clearGateway,
+		folderDisplayMode,
+		setFolderDisplayMode,
+		clearFolderDisplayMode,
 		clear,
 	};
 };

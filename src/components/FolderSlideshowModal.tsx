@@ -41,13 +41,7 @@ export const FolderSlideshowModal = ({ files, index = 0, setIndex, isOpen, onClo
 			<ModalContent>
 				<ModalHeader>Preview</ModalHeader>
 				<ModalCloseButton />
-				<ModalBody>
-					{isLoading ? (
-						<Progress size="xs" isIndeterminate />
-					) : (
-						<PreviewImage src={src} />
-					)}
-				</ModalBody>
+				<ModalBody>{isLoading ? <Progress size="xs" isIndeterminate /> : <PreviewImage src={src} />}</ModalBody>
 				<ModalFooter>
 					<ButtonGroup>
 						<Button isDisabled={index === 0} onClick={() => setIndex(index - 1)}>

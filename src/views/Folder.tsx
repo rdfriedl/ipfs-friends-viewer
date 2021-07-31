@@ -1,12 +1,21 @@
-import React, { useState } from "react";
-import { Link, useLocation, useParams } from "react-router-dom";
+import React, { useState, useCallback } from "react";
+import { useHistory, useLocation, useParams } from "react-router-dom";
+import styled from "styled-components";
+import { Box, Button, ButtonGroup, Flex } from "@chakra-ui/react";
 
 import { PageContainer } from "../components/PageContainer";
-import { Box, ButtonGroup, Flex, Wrap, WrapItem } from "@chakra-ui/react";
 import { UpButton } from "../components/UpButton";
-import { useDeviceFolderMetadata } from "../hooks/useDeviceFolderMetadata";
-import { FolderCard } from "../components/FolderCard";
+import { FileBackup, FolderBackup, useDeviceFolderMetadata } from "../hooks/useDeviceFolderMetadata";
 import { FolderSlideshowModal } from "../components/FolderSlideshowModal";
+import { FolderContentsTable } from "../components/FolderContentsTable";
+import { useAppSettings } from "../providers/AppSettingsProvider";
+import { FolderContentsCards } from "../components/FolderContentsCards";
+
+const PageContent = styled.div`
+	overflow-x: hidden;
+	overflow-y: auto;
+	padding-bottom: 2rem;
+`;
 
 type FolderPageProps = {
 	ipns: string;
@@ -14,9 +23,33 @@ type FolderPageProps = {
 };
 
 const FolderPage = ({ ipns, path }: FolderPageProps) => {
+	const history = useHistory();
+	const settings = useAppSettings();
 	const { data: metadata } = useDeviceFolderMetadata(ipns, path);
 	const [slideshowOpen, setSlideshowOpen] = useState(false);
 	const [slideshowIndex, setSlideshowIndex] = useState(0);
+
+	const handleFileClick = useCallback(
+		(file: FileBackup) => {
+			if (metadata) {
+				const index = metadata.files.indexOf(file);
+				setSlideshowIndex(index);
+				setSlideshowOpen(true);
+			}
+		},
+		[metadata, setSlideshowOpen, setSlideshowIndex]
+	);
+	const handleClickFolder = useCallback(
+		(folder: FolderBackup) => {
+			history.push(`/device/${ipns}/${path}/${folder.hash}`);
+		},
+		[history]
+	);
+
+	let DisplayComponent = FolderContentsCards;
+	if (settings.folderDisplayMode === "table") {
+		DisplayComponent = FolderContentsTable;
+	}
 
 	return (
 		<>
@@ -25,32 +58,27 @@ const FolderPage = ({ ipns, path }: FolderPageProps) => {
 					<ButtonGroup>
 						<UpButton>Back</UpButton>
 					</ButtonGroup>
+					<ButtonGroup isAttached>
+						<Button
+							colorScheme={settings.folderDisplayMode === "table" ? "blue" : undefined}
+							onClick={() => settings.setFolderDisplayMode("table")}
+						>
+							Table
+						</Button>
+						<Button
+							colorScheme={settings.folderDisplayMode === "cards" ? "blue" : undefined}
+							onClick={() => settings.setFolderDisplayMode("cards")}
+						>
+							Cards
+						</Button>
+					</ButtonGroup>
 				</Flex>
 			</Box>
-			<Wrap>
-				{metadata?.folders.map((folder) => (
-					<WrapItem key={folder.hash}>
-						<FolderCard name={folder.name} to={`/device/${ipns}/${path}/${folder.hash}`} />
-					</WrapItem>
-				))}
-				{metadata?.files.map((file, index) => (
-					<WrapItem key={file.fileHash}>
-						<Box
-							borderWidth="1px"
-							borderRadius="lg"
-							overflow="hidden"
-							py="2"
-							px="4"
-							onClick={() => {
-								setSlideshowIndex(index);
-								setSlideshowOpen(true)
-							}}
-						>
-							{file.filename}
-						</Box>
-					</WrapItem>
-				))}
-			</Wrap>
+			<PageContent>
+				{metadata && (
+					<DisplayComponent metadata={metadata} onClickFolder={handleClickFolder} onClickFile={handleFileClick} />
+				)}
+			</PageContent>
 			{metadata && (
 				<FolderSlideshowModal
 					files={metadata?.files}

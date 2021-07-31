@@ -1,4 +1,5 @@
 import React, { Suspense } from "react";
+import styled from "styled-components";
 import { Header } from "./Header";
 
 export const PageContainer: React.FC = ({ children }) => (
