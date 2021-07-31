@@ -43,7 +43,7 @@ const FolderPage = ({ ipns, path }: FolderPageProps) => {
 		(folder: FolderBackup) => {
 			history.push(`/device/${ipns}/${path}/${folder.hash}`);
 		},
-		[history]
+		[history, ipns, path]
 	);
 
 	let DisplayComponent = FolderContentsCards;
