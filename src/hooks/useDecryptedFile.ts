@@ -28,6 +28,7 @@ export function useDecryptedFile(ipfsHash?: string, mimeType?: string | null) {
 		{
 			enabled: !!privateKey && !!publicKey && !!gateway && !!ipfsHash,
 			staleTime: 10 * 1000,
+			cacheTime: 60 * 1000,
 			refetchOnWindowFocus: false,
 		}
 	);
