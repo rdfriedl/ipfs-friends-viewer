@@ -14,16 +14,17 @@ export function useDecryptedFile(ipfsHash?: string, mimeType?: string | null) {
 			const res = await fetch(new URL(`/ipfs/${ipfsHash}`, gateway).href);
 			if (!res.body) throw new Error("Failed to fetch image");
 
+			const data = await readUint8Stream(res.body);
+
 			const decrypted = await decrypt({
-				message: await readMessage({ binaryMessage: res.body }),
+				message: await readMessage({ binaryMessage: data }),
 				decryptionKeys: privateKey,
 				verificationKeys: publicKey,
 				expectSigned: true,
 				format: "binary",
 			});
 
-			const merged = await readUint8Stream(decrypted.data as ReadableStream<Uint8Array>);
-			return new Blob([merged], { type: mimeType ?? undefined });
+			return new Blob([decrypted.data], { type: mimeType ?? undefined });
 		},
 		{
 			enabled: !!privateKey && !!publicKey && !!gateway && !!ipfsHash,

@@ -11,7 +11,7 @@ export async function readUint8Stream(stream: ReadableStream<Uint8Array>) {
 		}
 		if (result.value) arrays.push(result.value);
 	}
-	const merged = new Uint8Array(arrays.reduce((length, arr) => length + arr.length, 0));
+	const merged: Uint8Array = new Uint8Array(arrays.reduce((length, arr) => length + arr.length, 0));
 	let offset = 0;
 	for (const array of arrays) {
 		merged.set(array, offset);
